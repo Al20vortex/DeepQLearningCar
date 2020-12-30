@@ -45,7 +45,7 @@ class Car:
         self.update_sprite()
 
     def update_sprite(self):
-        self.sprite.rotation = self.rot + 90
+        self.sprite.rotation = self.rot
         self.sprite.x = self.loc[0]
         self.sprite.y = self.loc[1]
 
@@ -66,10 +66,14 @@ class Car:
     def move(self):
         if self.crashed == True:
             return
+        # self.loc[0] += self.speed * \
+        #     -math.cos(self.rot * 2 * math.pi / 360)
+        # self.loc[1] += self.speed * \
+        #     math.sin(self.rot * 2 * math.pi / 360)
         self.loc[0] += self.speed * \
-            -math.cos((self.rot + 180) * 2 * math.pi / 360)
+            math.sin(self.rot * 2 * math.pi / 360)
         self.loc[1] += self.speed * \
-            math.sin((self.rot + 180) * 2 * math.pi / 360)
+            math.cos(self.rot * 2 * math.pi / 360)
         self.update_sprite()
 
     def calculate_corners(self):
