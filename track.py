@@ -9,10 +9,10 @@ walls = []
 class Wall:
     # initializes with the coords from gimp
     def __init__(self, x1, y1, x2, y2):
-        self.x1 = x1
-        self.x2 = x2
-        self.y1 = 720 - y1
-        self.y2 = 720 - y2
+        self.x1 = float(x1)
+        self.x2 = float(x2)
+        self.y1 = float(720 - y1)
+        self.y2 = float(720 - y2)
         self.color = (0, 0, 0)
         self.graphics = NULL
 
@@ -20,12 +20,23 @@ class Wall:
         self.graphics = pyglet.shapes.Line(self.x1, self.y1, self.x2, self.y2, 2,
                                            color=self.color, batch=wall_batch)
 
-    def detect_collison(self):
-        # TODO
-        pass
+    # checks two lines if they collide
+    # this algorithm is directly pasted from Code Bullet's Car AI Project
+    # found here: https://github.com/Code-Bullet/Car-QLearning
 
-        # Outer walls
-walls.append(Wall(92, 69, 1068, 72))
+
+def linesCollided(x1, y1, x2, y2, x3, y3, x4, y4):
+    uA = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / \
+        ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))
+    uB = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / \
+        ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))
+    if 0 <= uA <= 1 and 0 <= uB <= 1:
+        return True
+    return False
+
+
+# Outer walls
+walls.append(Wall(92.0, 69, 1068, 72))
 walls.append(Wall(1068, 72, 1191, 165))
 walls.append(Wall(1191, 165, 1197, 330))
 walls.append(Wall(1197, 330, 1092, 420))

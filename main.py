@@ -70,12 +70,24 @@ def handle_input():
     return False
 
 
+def reset_game():
+    global my_car
+    my_car = Car(car_sprite, loc=np.array(
+        [float(width/3), float(height * 8.5/10)]))
+
+
+def handle_crash():
+    if my_car.crashed == True:
+        reset_game()
+
+
 @game_window.event
 def on_draw():
     game_window.clear()
     racetrack.draw()
     batch.draw()
     track.wall_batch.draw()
+    car.corner_batch.draw()
 
 
 @game_window.event
@@ -83,8 +95,11 @@ def update(dt):
     global my_car
     if not handle_input():
         my_car.decelerate()
-
+    handle_crash()
     my_car.move()
+    my_car.calculate_corners()
+    my_car.make_ray_corners()
+    my_car.detect_collison()
     my_car.update_sprite()
 
 
