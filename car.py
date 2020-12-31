@@ -16,6 +16,7 @@ corner_dist = math.sqrt((car_img.width / 2.0)**2 + (car_img.height / 2.0)**2)
 corner_angle = math.atan(
     car_img.width / car_img.height) / (2.0 * math.pi) * 360.0
 corner_batch = pyglet.graphics.Batch()
+ray_batch = pyglet.graphics.Batch()
 ray_length = 200.0
 
 
@@ -31,6 +32,7 @@ class Car:
         self.rot = rot
         self.corners = np.array([[0, 0], [0, 0], [0, 0], [0, 0]])
         self.corner_graphics = []
+        self.ray_graphics = []
         self.hitbox = NULL
         self.rays = NULL
         self.ray_corners = NULL
@@ -116,7 +118,7 @@ class Car:
     def draw_ray_corners(self):
         for corner in self.ray_corners:
             self.corner_graphics.append(pyglet.shapes.Circle(corner[0], corner[1], 4,
-                                                             color=(0, 0, 0), batch=corner_batch))
+                                                             color=(0, 0, 0), batch=ray_batch))
 
     def detect_collison(self):
         for wall in track.walls:
@@ -141,10 +143,27 @@ class Car:
                                      [x-math.sin(self.rot * 2 * math.pi / 360) * ray_length, y-math.cos(
                                          (self.rot) * 2 * math.pi / 360) * ray_length]
                                      ])
-        self.draw_ray_corners()
+        self.make_rays()
+        self.draw_ray_intersection()
 
     # Car sees with these rays, there will be six total
 
     def make_rays(self):
-        for ray in self.ray_corners:
-            pass
+        centre = np.array([self.loc[0], self.loc[1]])
+        self.rays = np.array([[centre, self.ray_corners[1]],
+                              [centre, self.ray_corners[2]],
+                              [centre, self.ray_corners[3]],
+                              [centre, self.ray_corners[0]],
+                              [centre, self.ray_corners[4]],
+                              [centre, self.ray_corners[5]]
+                              ])
+
+    def draw_ray_intersection(self):
+        for ray in self.rays:
+            for wall in track.walls:
+                if track.linesCollided(wall.x1, wall.y1, wall.x2, wall.y2,
+                                       ray[0, 0], ray[0, 1], ray[1, 0], ray[1, 1]):
+                    col = track.getCollisionPoint(wall.x1, wall.y1, wall.x2, wall.y2,
+                                                  ray[0, 0], ray[0, 1], ray[1, 0], ray[1, 1])
+                    self.ray_graphics.append(pyglet.shapes.Circle(col[0], col[1], 7,
+                                                                  color=(255, 0, 0), batch=ray_batch))

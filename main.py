@@ -88,11 +88,14 @@ def on_draw():
     batch.draw()
     track.wall_batch.draw()
     car.corner_batch.draw()
+    car.ray_batch.draw()
 
 
 @game_window.event
 def update(dt):
     global my_car
+    my_car.corner_graphics = []
+    my_car.ray_graphics = []
     if not handle_input():
         my_car.decelerate()
     handle_crash()
