@@ -36,6 +36,7 @@ class Car:
         self.hitbox = NULL
         self.rays = NULL
         self.ray_corners = NULL
+        self.rewards = 0.00
 
     def accelerate(self, string):
         # stub
@@ -125,6 +126,13 @@ class Car:
             for line in self.hitbox:
                 if track.linesCollided(wall.x1, wall.y1, wall.x2, wall.y2, line[0, 0], line[0, 1], line[1, 0], line[1, 1]):
                     self.crashed = True
+
+    def detect_rewards(self):
+        for gate in track.reward_gates:
+            if gate.active:
+                if track.linesCollided(gate.x1, gate.y1, gate.x2, gate.y2, self.corners[0][0], self.corners[0][1], self.corners[1][0], self.corners[1][1]):
+                    self.rewards += 1.0
+                    gate.active = False
 
     def make_ray_corners(self):
         x = self.loc[0]
